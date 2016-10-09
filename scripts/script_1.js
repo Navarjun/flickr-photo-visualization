@@ -11,7 +11,7 @@ function ns_colorgraph() {
   this.canvas.size = {width: svg.attr("width") - this.canvas.origin.x * 2, height: svg.attr("height") - this.canvas.origin.y * 2};
 
   var ns = this;
-  d3.json("/data/photos_info_boston_colors.json", function(rawData) {
+  d3.json("data/photos_info_boston_colors.json", function(rawData) {
     rawData = rawData.filter(function(d){
         return d.dates.taken;
       }).map(function(d) {
