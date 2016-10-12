@@ -1,5 +1,5 @@
 var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-var data = [];
+var data = [], currData = -1, currColor = 0;
 var ns = {};
 ns.colorgraph = function() {
   ns.svg = d3.select("#div-container-color")
@@ -26,11 +26,12 @@ ns.colorgraph = function() {
           return d;
         })
       });
-      ns.visualize(data[0].data);
+      ns.visualize(data[0].data, currColor);
+      currData = 0;
     });
 };
 
-ns.visualize = function(rawData) {
+ns.visualize = function(rawData, colorIndex) {
   // CATEGORIZE BASED ON MONTH
   var data = d3.nest()
               .key(function(d) { return d.dates.taken.month(); })
@@ -118,8 +119,8 @@ ns.visualize = function(rawData) {
         })
         .enter()
         .append("g")
-        .attr("transform", function(d, i) { return "translate(0, "+ns.scaleY(d.key)+")"; })
-        .selectAll("g")
+        .attr("transform", function(d, i) { return "translate(0, "+ns.scaleY(d.key)+")"; });
+      ns.colorRects = gs.selectAll("rect")
         .data(function(d) {
           var c = d.values.sort(function(a, b) {
             var colorA = a.colors[0]._rgb, colorCatA = getColorCategory(colorA);
@@ -142,32 +143,17 @@ ns.visualize = function(rawData) {
           return c;
         })
         .enter()
-        .append("g")
-        .attr("transform", function(d, i) { return "translate(0, -"+(cellHeight*i)+")"; });
-      gs.on('click', function(d) {
-        console.log("d", d);
-        d3.select("#cool").html("<a href='"+getImageURL(d)+"'><img src='"+getImageURL(d)+"'/></a>");
-      });
-      gs.selectAll("rect")
-        .data(function(d) { return d.colors; })
-        .enter()
         .append("rect")
-        .attr("x", function(d, i){
-          if (i === 0) { return 0; }
-          else {
-            var sum = 0;
-            var lastFraction = ns.scaleX.bandwidth();
-            for (var j = 0; j < i; j++) {
-              lastFraction = lastFraction/2;
-              sum += lastFraction;
-            }
-            return sum;
-          }
-        })
+        .attr("transform", function(d, i) { return "translate(0, -"+(cellHeight*i)+")"; })
+        .attr("x", 0)
         .attr("y", -cellHeight)
-        .attr("width", function(d,i){ return ns.scaleX.bandwidth()/(Math.pow(2,i+1)); })
+        .attr("width", function(d,i){ return ns.scaleX.bandwidth(); })
         .attr("height", cellHeight)
-        .attr("fill", function(d,i){ return "rgba("+d._rgb[0]+","+d._rgb[1]+","+d._rgb[2]+", 1)"; });
+        .attr("fill", function(d,i){ return "rgba("+d.colors[colorIndex]._rgb[0]+","+d.colors[colorIndex]._rgb[1]+","+d.colors[colorIndex]._rgb[2]+", 1)"; })
+        .on('click', function(d) {
+          console.log("d", d);
+          d3.select("#cool").html("<a href='"+getImageURL(d)+"'><img src='"+getImageURL(d)+"'/></a>");
+        });
 };
 
 function categorize(d) {
@@ -196,9 +182,19 @@ function getColorCategory(_rgb) {
 }
 
 var switchData = function(index, ele) {
-  d3.selectAll("button.btn").classed("active", false);
+  d3.selectAll("button.city").classed("active", false);
   d3.select(ele).classed("active", true);
-  ns.visualize(data[index].data);
+  currData = index;
+  ns.visualize(data[index].data, currColor);
+};
+
+var switchColor = function(index, ele) {
+  d3.selectAll("button.color").classed("active", false);
+  d3.select(ele).classed("active", true);
+  currColor = index;
+  // ns.visualize(data[currData].data, currColor);
+  ns.colorRects.transition().duration(2000)
+    .attr("fill", function(d,i){ return "rgba("+d.colors[currColor]._rgb[0]+","+d.colors[currColor]._rgb[1]+","+d.colors[currColor]._rgb[2]+", 1)"; });
 };
 
 ns.colorgraph();
