@@ -10,9 +10,16 @@
   <script src="scripts/lib/moment.js" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   <script src="https://d3js.org/d3.v4.js"></script>
+  <script src="https://d3js.org/d3-queue.v3.min.js"></script>
 </head>
 
 <body style="margin: 0px; padding: 0px;">
+  <div class="container">
+    <div class="row">
+      <button type="button" class="btn btn-default btn-sm active" onclick="switchData(0, this)">Boston</button>
+      <button type="button" class="btn btn-default btn-sm" onclick="switchData(1, this)">Delhi</button>
+    </div>
+  </div>
   <div class="container-fluid">
     <div class="col-md-8" id="div-container-color">
 
