@@ -1,3 +1,39 @@
 .yAxis path {
   stroke-width: 0;
 }
+
+g .red {
+  fill: red;
+}
+
+g .green {
+  fill: green;
+}
+
+g .blue {
+  fill: blue;
+}
+
+g .yellow {
+  fill: yellow;
+}
+
+g .cyan {
+  fill: cyan;
+}
+
+g .purple {
+  fill: purple;
+}
+
+g .black {
+  fill: black;
+}
+
+g .gray {
+  fill: gray;
+}
+
+g .white {
+  fill: white;
+}
