@@ -1,3 +1,17 @@
+html, body {
+  height: 100%;
+}
+
+.buttonDiv {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+}
+
+.container-fluid {
+  height: 100%;
+}
+
 .yAxis path {
   stroke-width: 0;
 }
@@ -36,4 +50,8 @@ g .gray {
 
 g .white {
   fill: white;
+}
+
+.labelsGroup text {
+  font-size: 2em;
 }
