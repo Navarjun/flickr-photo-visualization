@@ -2,7 +2,7 @@ var margin = {l: 50, t: 50, r: 50, b: 50};
 var colors = ["black", "gray", "white", "purple", "cyan", "yellow", "blue", "green", "red"];
 // var colors = ["red", "green", "blue", "yellow", "cyan", "purple", "white", "gray", "black"];
 var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
+var animationDuration = 500;
 var getImageURL = function(photoInfo) {
   var photoId = photoInfo.id;
   var farmId = photoInfo.farm;
@@ -50,6 +50,13 @@ function hexToRgb(hex) {
 }
 
 var masterData;
+var positionForIndex = function(index, rows, columns, desiredWidth, desiredHeight) {
+  return {
+    x: ((index)%columns)*(desiredWidth/columns) + desiredHeight/7,
+    y: parseInt((index)/columns)*(desiredHeight/rows) + desiredWidth/7
+  };
+};
+
 function drawData(photos, plot) {
   // photos = photos.filter(function(d){return d.colors;})
   var parent = d3.select(plot.node().parentNode);
@@ -77,40 +84,52 @@ function drawData(photos, plot) {
     if (j.length == 0) {
       j = {key: d.date.month(), index: i};
 
-      d.fx = ((index.length)%4)*(desiredWidth/4) + desiredHeight/7;
-      d.fy = parseInt((index.length)/4)*(desiredHeight/4) + desiredWidth/7;
+      d.fx = positionForIndex(index.length, 3, 4, desiredWidth, desiredHeight).x;
+      d.fy = positionForIndex(index.length, 3, 4, desiredWidth, desiredHeight).y;
       index.push(j);
     } else {
       j = j[0];
       links.push({source: j.index, target: i, value: 10});
     }
   });
-  var positionForIndex = function(index) {
-    return {
-      x: ((index)%4)*(desiredWidth/4) + desiredHeight/7,
-      y: parseInt((index)/4)*(desiredHeight/4) + desiredWidth/7
-    };
-  };
-  var labels = plot
+
+  var labels = plot.selectAll("labelsGroup")
+    .data([1], function(d){ return d; });
+
+  labels.exit().remove();
+  labels = labels.enter()
     .append("g")
     .classed("labelsGroup", true)
-    .selectAll("text")
-    .data(index)
-    .enter()
+    .merge(labels);
+  var text = labels.selectAll("text").data(index, function(d) { return d.key; });
+  text.exit().remove();
+  text.enter()
     .append("text")
+    .merge(text)
     .text(function(d){ return months[d.key]; })
     .attr("fill", "#222")
-    .attr("x", function(_, i){ return positionForIndex(i).x - 20; })
-    .attr("y", function(_, i){ return positionForIndex(i).y - 60; })
+    .transition().duration(animationDuration)
+    .attr("x", function(_, i){ return positionForIndex(i, 3, 4, desiredWidth, desiredHeight).x - 20; })
+    .attr("y", function(_, i){ return positionForIndex(i, 3, 4, desiredWidth, desiredHeight).y - 60; })
 
-  var gSelection = plot.append('g')
-    .selectAll('g')
-    .data(photos)
-    .enter()
+  var gSelection = plot.selectAll(".photosG")
+    .data([1], function(d){ return d; });
+
+  gSelection.exit().remove();
+  gSelection = gSelection.enter().append('g')
+    .classed("photosG", true)
+    .merge(gSelection);
+  var photosGroup = gSelection.selectAll('g')
+    .data(photos, function(d){ return d.id; });
+  photosGroup.exit().remove();
+  photosGroup = photosGroup.enter()
     .append('g')
-    .attr("class", function(d){ return "photo-group photo-"+d.id; })
-    .attr("transform", function(d){ return "translate("+0+",0)"; })
+    .attr("class", function(d){ return "photo-group photo-"+d.id; });
+  var photo = photosGroup.selectAll("image").data(function(d){ return [d]; });
+  photo.exit().remove();
+  photo.enter()
     .append("image")
+    .merge(photo)
     .attr("x", 0)
     .attr("y", 0)
     .attr("width", 10)
