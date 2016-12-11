@@ -2,12 +2,6 @@ html, body {
   height: 100%;
 }
 
-.buttonDiv {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-}
-
 .container-fluid {
   height: 100%;
 }
@@ -53,5 +47,15 @@ g .white {
 }
 
 .labelsGroup text {
+  font-size: 2em;
+}
+
+/* ITERATION 5 */
+.axis path, .tick line {
+  fill: none;
+  stroke-width: 0px;
+}
+
+.tick text {
   font-size: 2em;
 }
