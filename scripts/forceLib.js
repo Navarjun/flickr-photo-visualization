@@ -9,6 +9,7 @@ d3.na.force = function() {
     };
   };
   this.data = [];
+  this.rows = 3; this.columns = 4;
   this.simulation = d3.forceSimulation();
   this.group = function(d) { return d.date.month(); };
   this.groupLabels = {0: "Jan", 1:"Feb", 2:"Mar", 3:"Apr", 4:"May", 5:"Jun",
@@ -38,8 +39,8 @@ d3.na.force = function() {
       if (j.length == 0) {
         j = {key: self.group(d), index: i};
 
-        d.fx = positionForIndex(index.length, 3, 4, desiredWidth, desiredHeight).x;
-        d.fy = positionForIndex(index.length, 3, 4, desiredWidth, desiredHeight).y;
+        d.fx = positionForIndex(index.length, self.rows, self.columns, desiredWidth, desiredHeight).x;
+        d.fy = positionForIndex(index.length, self.rows, self.columns, desiredWidth, desiredHeight).y;
         index.push(j);
       } else {
         j = j[0];
@@ -65,8 +66,9 @@ d3.na.force = function() {
       .text(function(d){ return self.groupLabels[d.key]; })
       .attr("fill", "#222")
       .transition().duration(animationDuration)
-      .attr("x", function(_, i){ return positionForIndex(i, 3, 4, desiredWidth, desiredHeight).x - 20; })
-      .attr("y", function(_, i){ return positionForIndex(i, 3, 4, desiredWidth, desiredHeight).y - 60; })
+      .attr("transform", function(d){ return "translate(-"+d3.select(this).node().getBBox().width/2+",0)"})
+      .attr("x", function(_, i){ return positionForIndex(i, self.rows, self.columns, desiredWidth, desiredHeight).x; })
+      .attr("y", function(_, i){ return positionForIndex(i, self.rows, self.columns, desiredWidth, desiredHeight).y - 60; });
 
     var gSelection = plot.selectAll(".photosG")
       .data([1], function(d){ return d; });

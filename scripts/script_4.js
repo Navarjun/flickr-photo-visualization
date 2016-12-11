@@ -60,6 +60,7 @@ function setupButtonFunctionality() {
           force.groupLabels = {0: "Jan", 1:"Feb", 2:"Mar", 3:"Apr", 4:"May", 5:"Jun",
             6:"Jul", 7:"Aug", 8:"Sep", 9:"Oct", 10:"Nov", 11:"Dec"};
           force.group = function(d) { return d.date.month(); }
+          force.rows = 3; force.columns = 4;
           force.draw(plot);
           break;
         case "time":
@@ -69,6 +70,7 @@ function setupButtonFunctionality() {
             else if (d.date.hour() <= 17) { return "afternoon"; }
             return "night";
           };
+          force.rows = 1; force.columns = 3;
           force.groupLabels = {beforeNight: "before-night", morning: "morning", afternoon: "afternoon", night: "night"};
           force.draw(plot);
           break;
