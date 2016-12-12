@@ -57,8 +57,14 @@ g .white {
   stroke-width: 0px;
 }
 
+#xAxisDiv {
+  margin-top: 50px;
+}
+
 .buttonDiv {
   padding: 20px;
+  position: fixed;
+  z-index: 100;
 }
 
 .tick text {

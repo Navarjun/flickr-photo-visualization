@@ -31,6 +31,7 @@ function dataLoaded(err, photos) {
     .concat(photos[1].map(function(d){ d.city="delhi"; return d;}))
     .map(function(d) {
       d.date = new moment(d.dates.taken);
+      d.dateuploaded = new moment(+d.dateuploaded*1000);
       return d;
     });
 
@@ -90,7 +91,7 @@ function setupButtons() {
       var type = d3.select(this).attr("id");
       switch (type) {
 
-        case "month":
+        case "taken_month":
           var padding = 200, catCount = 12;
           var scaleY = d3.scaleOrdinal().domain(d3.range(0, 11, 1)).range(d3.range(padding/2, padding*catCount, padding));
           yAxis.scale(scaleY).tickFormat(function(d){ return monthNames[d]; });
@@ -99,11 +100,24 @@ function setupButtons() {
           force.groupY(mode)
             .scaleY(scaleY);
           setTimeout(force.draw, 0);
-          vizSVG.transition().attr("height", padding*(catCount+1));
+          vizCanvas.transition().attr("height", padding*(catCount+1));
           yAxisSVG.transition().attr("height", padding*(catCount+1));
           break;
 
-        case "time":
+        case "uploaded_month":
+          var padding = 200, catCount = 12;
+          var scaleY = d3.scaleOrdinal().domain(d3.range(0, 11, 1)).range(d3.range(padding/2, padding*catCount, padding));
+          yAxis.scale(scaleY).tickFormat(function(d){ return monthNames[d]; });
+          d3.select(".axisY").call(yAxis);
+          mode = function(d){ return d.dateuploaded.month(); };
+          force.groupY(mode)
+            .scaleY(scaleY);
+          setTimeout(force.draw, 0);
+          vizCanvas.transition().attr("height", padding*(catCount+1));
+          yAxisSVG.transition().attr("height", padding*(catCount+1));
+          break;
+
+        case "taken_time":
           var padding = 300, catCount = 3;
           var scaleY = d3.scaleOrdinal().domain(["morning", "afternoon", "night"]).range(d3.range(padding/2, padding*12, padding));
           yAxis.scale(scaleY).tickFormat(null);
@@ -118,7 +132,26 @@ function setupButtons() {
             .groupY(mode)
             .scaleY(scaleY)
           setTimeout(force.draw, 0);
-          vizSVG.transition().attr("height", padding*(catCount+1));
+          vizCanvas.transition().attr("height", padding*(catCount+1));
+          yAxisSVG.transition().attr("height", padding*(catCount+1));
+          break;
+
+        case "uploaded_time":
+          var padding = 300, catCount = 3;
+          var scaleY = d3.scaleOrdinal().domain(["morning", "afternoon", "night"]).range(d3.range(padding/2, padding*12, padding));
+          yAxis.scale(scaleY).tickFormat(null);
+          mode = function(d){
+            if (d.dateuploaded.hour() <= 5) { return "night"; }
+            else if (d.dateuploaded.hour() <= 11) { return "morning"; }
+            else if (d.dateuploaded.hour() <= 17) { return "afternoon"; }
+            return "night";
+          };
+          d3.select(".axisY").call(yAxis);
+          force
+            .groupY(mode)
+            .scaleY(scaleY)
+          setTimeout(force.draw, 0);
+          vizCanvas.transition().attr("height", padding*(catCount+1));
           yAxisSVG.transition().attr("height", padding*(catCount+1));
           break;
       }
