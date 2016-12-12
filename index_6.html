@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Flickr Data Viz</title>
+  <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap-theme.css">
+  <link rel="stylesheet" type="text/css" href="styles/style.css">
+  <script src="scripts/lib/jquery.js" crossorigin="anonymous"></script>
+  <script src="scripts/lib/moment.js" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+  <script src="https://d3js.org/d3.v4.js"></script>
+  <script src="https://d3js.org/d3-queue.v3.min.js"></script>
+  <!-- <script src="scripts/lib/p5.min.js"></script> -->
+</head>
+
+<body style="margin: 0px; padding: 0px;">
+  <div class="container-fluid">
+    <div class="row buttonDiv">
+      <div class="btn-group">
+        <button type="button" class="btn btn-primary" id="month">Month</button>
+        <button type="button" class="btn btn-default" id="time">Time of Day</button>
+        <!-- <button type="button" class="btn btn-primary"></button> -->
+      </div>
+    </div>
+    <div class="row" id="xAxisDiv">
+      <div class="col-xs-offset-1 col-xs-11">
+        <svg id="xAxisSVG">
+
+        </svg>
+      </div>
+    </div>
+    <div class="row" id="vizRow">
+      <div class="col-xs-1 yAxisDiv">
+        <svg id="yAxisSVG">
+        </svg>
+      </div>
+      <div class="col-xs-11 vizDiv">
+        <canvas id="vizCanvas">
+        </canvas>
+      </div>
+    </div>
+  </div>
+  <!-- <script src="script.js"></script> -->
+  <script src="scripts/forceLib_6.js"></script>
+  <script src="scripts/script_6.js"></script>
+  <!-- <script src="scripts/lib/canvas-interaction-lib.js"></script> -->
+</body>
+</html>
