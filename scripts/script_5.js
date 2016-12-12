@@ -1,6 +1,5 @@
 var monthNames = ["January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
-];
+  "July", "August", "September", "October", "November", "December"];
 
 var margin = {l: 50, t: 50, r: 50, b: 50};
 
@@ -19,7 +18,7 @@ var yAxisSVG = d3.select("#yAxisSVG").attr("height", 12*200).attr("width", d3.se
 var vizSVG = d3.select("#vizSVG").attr("height", 12*200).attr("width", xAxisSVG.attr("width"));
 var plot = vizSVG.append("g").attr("transform", "translate("+margin.l+","+margin.t+")");
 
-var xAxis, yAxis;
+var xAxis, yAxis, mode = function(d){ return d.date.month(); };
 var force = d3.na.force();
 
 d3.queue()
@@ -38,18 +37,27 @@ function dataLoaded(err, photos) {
   var nodes = plot.selectAll("g")
     .data(photos)
     .enter()
-    .append("g");
+    .append("g")
+    .classed("photosG", true);
   nodes
     .append("image")
     .attr("width", 10)
     .attr("height", 10)
     .attr("xlink:href", function(d){ return getImageURL(d); })
-    .style("opacity", 1);
+    .style("opacity", 1)
+    .on("click", function(d){
+      var modeD = mode(d);
+      d3.selectAll(".photosG").attr("opacity", function(e){
+        return modeD == mode(e) ? 1 : 0.2;
+      });
+    });
 
   var desiredHeight = vizSVG.attr("height") - margin.t - margin.b,
-    desiredWidth = vizSVG.attr("width") - margin.l - margin.r;
-  var scaleX = d3.scaleOrdinal().domain(["boston", "delhi"]).range(d3.range(0, desiredWidth, desiredWidth/2)),
-    scaleY = d3.scaleOrdinal().domain(d3.range(0, 11, 1)).range(d3.range(0, desiredHeight, desiredHeight/12));
+    desiredWidth = vizSVG.attr("width") - margin.l - margin.r,
+    padding = 200, xDomain = ["boston", "delhi"];
+    console.log((desiredWidth/2)-(padding*xDomain.length/2), (desiredWidth/2)+(padding*xDomain.length/2), padding*xDomain.length);
+  var scaleX = d3.scaleOrdinal().domain(["boston", "delhi"]).range(d3.range((desiredWidth/2)-(padding*xDomain.length/2), (desiredWidth/2)+(padding*xDomain.length/2), padding)),
+    scaleY = d3.scaleOrdinal().domain(d3.range(0, 12, 1)).range(d3.range(0, desiredHeight, desiredHeight/12));
 
   xAxis = d3.axisBottom().scale(scaleX);
   xAxis(xAxisSVG.append("g").attr("transform", "translate("+margin.l+", 0)").attr("class", "axis axisX"));
@@ -79,27 +87,36 @@ function setupButtons() {
       d3.select(this).classed("btn-primary", true).classed("btn-default", false);
       var type = d3.select(this).attr("id");
       switch (type) {
+
         case "month":
-          var scaleY = d3.scaleOrdinal().domain(d3.range(0, 11, 1)).range(d3.range(0, desiredHeight, desiredHeight/12));
+          var padding = 200, catCount = 12;
+          var scaleY = d3.scaleOrdinal().domain(d3.range(0, 11, 1)).range(d3.range(padding/2, padding*catCount, padding));
           yAxis.scale(scaleY).tickFormat(function(d){ return monthNames[d]; });
           d3.select(".axisY").call(yAxis);
           force.groupY(function(d){ return d.date.month(); })
             .scaleY(scaleY);
-            force.draw();
+          setTimeout(force.draw, 0);
+          vizSVG.transition().attr("height", padding*(catCount+1));
+          yAxisSVG.transition().attr("height", padding*(catCount+1));
           break;
+
         case "time":
-          var scaleY = d3.scaleOrdinal().domain(["morning", "afternoon", "night"]).range([150, 450, 750]);
-          yAxis.scale(scaleY).tickFormat(null)
+          var padding = 300, catCount = 3;
+          var scaleY = d3.scaleOrdinal().domain(["morning", "afternoon", "night"]).range(d3.range(padding/2, padding*12, padding));
+          yAxis.scale(scaleY).tickFormat(null);
+          mode = function(d){
+            if (d.date.hour() <= 5) { return "night"; }
+            else if (d.date.hour() <= 11) { return "morning"; }
+            else if (d.date.hour() <= 17) { return "afternoon"; }
+            return "night";
+          };
           d3.select(".axisY").call(yAxis);
           force
-            .groupY(function(d){
-              if (d.date.hour() <= 5) { return "night"; }
-              else if (d.date.hour() <= 11) { return "morning"; }
-              else if (d.date.hour() <= 17) { return "afternoon"; }
-              return "night";
-            })
+            .groupY(mode)
             .scaleY(scaleY)
-          force.draw();
+          setTimeout(force.draw, 0);
+          vizSVG.transition().attr("height", padding*(catCount+1));
+          yAxisSVG.transition().attr("height", padding*(catCount+1));
           break;
       }
     })

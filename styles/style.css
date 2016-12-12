@@ -1,5 +1,6 @@
 html, body {
   height: 100%;
+  background: #222;
 }
 
 .container-fluid {
@@ -56,6 +57,11 @@ g .white {
   stroke-width: 0px;
 }
 
+.buttonDiv {
+  padding: 20px;
+}
+
 .tick text {
   font-size: 2em;
+  fill: #AAA;
 }
