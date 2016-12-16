@@ -47,6 +47,7 @@ function dataLoaded(err, photos) {
     .style("opacity", 1)
     .on("click", function(d){
       var modeD = mode(d);
+      d3.selectAll(".tag").classed("btn-primary", false).classed("btn-default", true);
       d3.selectAll(".photosG").attr("opacity", function(e){
         return modeD == mode(e) ? 1 : 0.2;
       });
@@ -56,8 +57,25 @@ function dataLoaded(err, photos) {
       d3.select("#description").html(d.description._content == "" ? "(No caption)" : d.description._content);
       d3.select("#selectedImage")
         .attr("src", getImageURL(d, "m"));
-      d3.select("#tags")
-        .text(d.tags.tag.map(function(e){ return e.raw; }).reduce(function(p, c) { return p==""? c : p+", "+c; }, ""));
+      d3.selectAll(".tag").remove();
+      var tag = d3.select("#tags")
+        .selectAll(".tag")
+        .data(d.tags.tag);
+      tag.enter()
+        .append("button")
+        .classed("tag", true)
+        .classed("btn", true)
+        .classed("btn-default", true)
+        .text(function(e){ return e.raw; })
+        .on("click", function(d){
+          d3.selectAll(".tag").classed("btn-primary", false).classed("btn-default", true);
+          d3.select(this).classed("btn-primary", true).classed("btn-default", false);
+          d3.selectAll(".photosG").attr("opacity", function(e){
+            var hasTag = false;
+            e.tags.tag.forEach(function(t){ if (t.raw == d.raw){ hasTag = true; }});
+            return hasTag ? 1 : 0.2;
+          });
+        });
       d3.select("#flickrLink")
         .attr("href", d.urls.url[0]._content);
     });
