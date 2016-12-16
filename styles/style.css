@@ -1,6 +1,7 @@
 html, body {
   height: 100%;
   background: #222;
+  overflow-x: hidden;
 }
 
 .container-fluid {
@@ -70,4 +71,18 @@ g .white {
 .tick text {
   font-size: 2em;
   fill: #AAA;
+}
+
+#selectedImage {
+  max-width: 80%;
+  max-height: 400px;
+}
+
+#rightSidebar {
+  color: white;
+}
+
+#imageDetails {
+  opacity: 0;
+  margin-top: 75px;
 }
