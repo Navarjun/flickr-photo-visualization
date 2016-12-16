@@ -80,9 +80,14 @@ g .white {
 
 #rightSidebar {
   color: white;
+  height: 100%;
 }
 
 #imageDetails {
   opacity: 0;
   margin-top: 75px;
+}
+
+#imageDetails a {
+  color: #AAAAFF;
 }

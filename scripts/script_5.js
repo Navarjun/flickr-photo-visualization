@@ -53,18 +53,20 @@ function dataLoaded(err, photos) {
     })
     .on("dblclick", function(d){
       d3.select("#imageDetails").style("opacity", 1);
-      d3.select("#description").text(d.description._content);
+      d3.select("#description").html(d.description._content == "" ? "(No caption)" : d.description._content);
       d3.select("#selectedImage")
         .attr("src", getImageURL(d, "m"));
       d3.select("#tags")
         .text(d.tags.tag.map(function(e){ return e.raw; }).reduce(function(p, c) { return p==""? c : p+", "+c; }, ""));
+      d3.select("#flickrLink")
+        .attr("href", d.urls.url[0]._content);
     });
 
   var desiredHeight = vizSVG.attr("height") - margin.t - margin.b,
     desiredWidth = vizSVG.attr("width") - margin.l - margin.r,
     padding = 200, xDomain = ["Boston", "Delhi"];
   console.log((desiredWidth/2)-(padding*xDomain.length/2), (desiredWidth/2)+(padding*xDomain.length/2), padding*xDomain.length);
-  var scaleX = d3.scaleOrdinal().domain(["boston", "delhi"]).range([(desiredWidth/4), (desiredWidth*3/4)]),
+  var scaleX = d3.scaleOrdinal().domain(["Boston", "Delhi"]).range([(desiredWidth/4), (desiredWidth*3/4)]),
     scaleY = d3.scaleOrdinal().domain(d3.range(0, 12, 1)).range(d3.range(0, desiredHeight, desiredHeight/12));
 
   xAxis = d3.axisBottom().scale(scaleX);
@@ -98,7 +100,7 @@ function setupButtons() {
       switch (type) {
 
         case "month":
-          var padding = 200, catCount = 12;
+          var padding = 200, catCount = 13;
           var scaleY = d3.scaleOrdinal().domain(d3.range(0, 11, 1)).range(d3.range(padding/2, padding*catCount, padding));
           yAxis.scale(scaleY).tickFormat(function(d){ return monthNames[d]; });
           d3.select(".axisY").call(yAxis);
@@ -130,8 +132,8 @@ function setupButtons() {
           break;
 
         case "time-upload":
-          var padding = 200, catCount = 3;
-          var scaleY = d3.scaleOrdinal().domain(["24 hours", "a Week", "a Month", "a Year", "> Year"]).range(d3.range(padding/2, padding*12, padding));
+          var padding = 300, catCount = 5;
+          var scaleY = d3.scaleOrdinal().domain(["a Day", "a Week", "a Month", "a Year", "> Year"]).range(d3.range(padding/2, padding*12, padding));
           yAxis.scale(scaleY).tickFormat(null);
           mode = function(d){
             var diff = d.date.toDate().valueOf() - d.dateuploaded.toDate().valueOf();
@@ -140,7 +142,7 @@ function setupButtons() {
             else if (diff <= 7) { return "a Week"; }
             else if (diff <= 30) { return "a Month"; }
             else if (diff <= 30) { return "a Year"; }
-            return "After a Year";
+            return "> Year";
           };
           d3.select(".axisY").call(yAxis);
           force
