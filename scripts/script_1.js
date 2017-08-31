@@ -30,7 +30,6 @@ ns.colorgraph = function() {
       currData = 0;
     });
 };
-<<<<<<< HEAD
 
 ns.visualize = function(rawData, colorIndex) {
   // CATEGORIZE BASED ON MONTH
@@ -47,24 +46,6 @@ ns.visualize = function(rawData, colorIndex) {
               })
               .entries(rawData);
 
-=======
-
-ns.visualize = function(rawData, colorIndex) {
-  // CATEGORIZE BASED ON MONTH
-  var data = d3.nest()
-              .key(function(d) { return d.dates.taken.month(); })
-              .key(function(d) {
-                if (d.dates.taken.hour() > 4 && d.dates.taken.hour() <= 12) {
-                  return "morning";
-                } else if (d.dates.taken.hour() > 12 && d.dates.taken.hour() <= 17) {
-                  return "afternoon";
-                } else {
-                  return "night";
-                }
-              })
-              .entries(rawData);
-
->>>>>>> master
   var maxPhotosInSection = d3.max(data, function(d) {
     return d3.max(d.values, function(e){
         return e.values.length;
@@ -88,11 +69,8 @@ ns.visualize = function(rawData, colorIndex) {
   });
   var maxPhotosSum = maxPhotosInMorning + maxPhotosInNight + maxPhotosInAfternoon;
   console.log(data, maxPhotosInSection, maxPhotosInMorning, maxPhotosInAfternoon, maxPhotosInNight);
-<<<<<<< HEAD
-  var cellHeight = 4;
-=======
+
   var cellHeight = 10;
->>>>>>> master
   var sectionPadding = 30;
 
   ns.canvas.size.height = ((maxPhotosInMorning + maxPhotosInAfternoon + maxPhotosInNight)*cellHeight + sectionPadding*3);
@@ -143,11 +121,8 @@ ns.visualize = function(rawData, colorIndex) {
         .enter()
         .append("g")
         .attr("transform", function(d, i) { return "translate(0, "+ns.scaleY(d.key)+")"; });
-<<<<<<< HEAD
-      ns.colorRects = gs.selectAll("rect")
-=======
+
       ns.images = gs.selectAll("image")
->>>>>>> master
         .data(function(d) {
           var c = d.values.sort(function(a, b) {
             var colorA = a.colors[0]._rgb, colorCatA = getColorCategory(colorA);
@@ -170,15 +145,6 @@ ns.visualize = function(rawData, colorIndex) {
           return c;
         })
         .enter()
-<<<<<<< HEAD
-        .append("rect")
-        .attr("transform", function(d, i) { return "translate(0, -"+(cellHeight*i)+")"; })
-        .attr("x", 0)
-        .attr("y", -cellHeight)
-        .attr("width", function(d,i){ return ns.scaleX.bandwidth(); })
-        .attr("height", cellHeight)
-        .attr("fill", function(d,i){ return "rgba("+d.colors[colorIndex]._rgb[0]+","+d.colors[colorIndex]._rgb[1]+","+d.colors[colorIndex]._rgb[2]+", 1)"; })
-=======
         .append("image")
         .attr("transform", function(d, i) { return "translate(0, -"+(cellHeight*i)+")"; })
         .attr("x", 0)
@@ -186,7 +152,6 @@ ns.visualize = function(rawData, colorIndex) {
         .attr("width", cellHeight)
         .attr("height", cellHeight)
         .attr("xlink:href", function(d,i){ return getImageURL(d); })
->>>>>>> master
         .on('click', function(d) {
           console.log("d", d);
           d3.select("#cool").html("<a href='"+getImagePageURL(d)+"'><img src='"+getImageURL_M(d)+"'/></a>");
